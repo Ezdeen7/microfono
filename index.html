@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Control por voz</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    transition: background 0.3s, color 0.3s;
+  }
+  button {
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+  }
+</style>
+</head>
+<body>
+<h1>Control por voz</h1>
+<button id="btn">🎤 Activar micrófono</button>
+
+<script>
+  const boton = document.getElementById('btn');
+  let escuchando = false;
+
+  const reconocimiento = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  reconocimiento.lang = 'es-ES';
+  reconocimiento.continuous = true;
+
+  reconocimiento.onresult = (event) => {
+    const texto = event.results[event.results.length - 1][0].transcript.toLowerCase();
+    console.log("Escuchado:", texto);
+
+    if (texto.includes('modo oscuro')) {
+      document.body.style.background = '#121212';
+      document.body.style.color = '#fff';
+    }
+    if (texto.includes('modo claro')) {
+      document.body.style.background = '#fff';
+      document.body.style.color = '#000';
+    }
+    if (texto.includes('aumentar letra')) {
+      document.body.style.fontSize = 'larger';
+    }
+  };
+
+  boton.addEventListener('click', () => {
+    if (!escuchando) {
+      reconocimiento.start();
+      boton.textContent = "🎤 Micrófono activo";
+      escuchando = true;
+    } else {
+      reconocimiento.stop();
+      boton.textContent = "🎤 Activar micrófono";
+      escuchando = false;
+    }
+  });
+</script>
+</body>
+</html>
